@@ -1,154 +1,58 @@
+STAGEHAND INTELLIGENT AGENT ANALYSIS & QUALITY ISSUES (Score: undefined/10)
 
-You are tasked with generating comprehensive test artifacts for a web application.
-📊 CONTEXT PROVIDED:
-
-PACKAGE.JSON ANALYSIS:
-Dependencies: concurrently
-Dev Dependencies: @flydotio/dockerfile
-Scripts: dev
+🤖 INTELLIGENT AGENT FINDINGS:
 
 
-DATABASE SCHEMA AND SEED DATA (sample):
--- COMMANDS FOR DB TABLES
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+🎭 STAGEHAND COMPREHENSIVE REPORT:
+No detailed report available
 
--- COMMANDS FOR DB SEED
--- Add any initial data here if needed
+📸 VISUAL EVIDENCE - SCREENSHOTS:
+No screenshots available
+
+🧪 FAILED TEST SCREENSHOTS (if any):
+No failed test screenshots captured
+
+🚨 CRITICAL TECHNICAL FIXES REQUIRED:
+No critical issues detected
+
+🚨 ADDITIONAL ISSUES TO FIX:
+No additional issues listed
+
+🎯 YOUR CRITICAL TASK - IMPLEMENT EXACT TECHNICAL FIXES:
+
+**PRIORITY 1 - CRITICAL TECHNICAL FIXES:**
+If CORS/Host configuration errors were detected above, you MUST:
+- Open and edit the vite.config.js file (or similar configuration file)
+- Add the exact blocked hostname to server.allowedHosts array
+- Example: server: { allowedHosts: ['blocked-hostname.trycloudflare.com'] }
+
+If JavaScript errors were detected, you MUST:
+- Fix the exact JavaScript runtime errors mentioned above
+- Ensure proper imports and module resolution
+- Fix any TypeScript compilation errors
+
+**PRIORITY 2 - QUALITY IMPROVEMENTS:**
+1. **UI/UX Issues**: Fix layout, design, and user interface problems identified by browser testing
+2. **Performance Issues**: Optimize loading times, reduce bundle size, improve Core Web Vitals
+3. **Accessibility Issues**: Add proper ARIA labels, keyboard navigation, improve contrast ratios
+4. **Mobile Responsiveness**: Ensure proper display and functionality on all device sizes
+5. **Interactive Elements**: Fix broken buttons, forms, navigation, and user interactions
+6. **Content Quality**: Improve text clarity, add missing content, fix broken links
+7. **SEO Issues**: Add proper meta tags, titles, descriptions, structured data
+8. **Error Handling**: Fix JavaScript errors, improve error messages, add loading states
+
+**INTELLIGENT AGENT DETECTED CRITICAL ISSUES** that prevent the application from loading properly. These are blocking deployment and MUST be fixed first.
+
+🚨 **SPECIAL ATTENTION - 403 HOST ERRORS**: 
 
 
-BACKEND API ENDPOINTS (extracted from server code):
-app.post('/api/auth/register'
-app.post('/api/auth/login'
-app.get('/api/auth/verify'
-app.get('/api/auth/me'
-app.put('/api/auth/profile'
-app.get('/api/protected'
-app.get('/api/health'
-app.get("/"
-app.get('*'
+🔒 ENV RULES (Do Not Modify):
+- Do NOT modify any environment files: .env, vitereact/.env, backend/.env.
+- Do NOT change any VITE_* variables in any env files.
+- Never set VITE_API_BASE_URL or API_BASE_URL to localhost or 127.0.0.1.
+- Always use import.meta.env.VITE_API_BASE_URL for API requests; keep it pointing to the current tunnel URL.
+- Current tunnel host: 123create-me-a-food-truck-website.launchpulse.ai
 
-Frontend URL: https://123create-me-a-food-truck-website.launchpulse.ai
-Backend URL: https://123create-me-a-food-truck-website.launchpulse.ai
-🎯 YOUR CRITICAL TASKS - ANALYZE, AND CREATE TEST FILES:
-STEP 1: Create test_users.json
-🔐 INTELLIGENT TEST USER CREATION:
-1. **ANALYZE DATABASE SCHEMA** (from db.sql):
-   - Find user table structure (users, user, accounts, etc.)
-   - Identify role/user_type field and possible values
-   - Detect required fields (name, email, password structure)
-   - Extract existing seed data if available
-2. **ANALYZE BACKEND API** (from server files):
-   - Find registration endpoint (/api/auth/register, /register, etc.)
-   - Find login endpoint (/api/auth/login, /login, etc.)
-   - Determine required payload structure
-   - Identify authentication flow
-3. **CREATE & VERIFY TEST USERS**:
-   - If seed data exists: extract credentials with known test passwords
-   - If no seed data: create users via API with curl commands
-   - Test login for each user to ensure credentials work
-   - Support different roles: admin, user, guest, host, customer etc. based on the database schema and seed data
-4. **GENERATE test_users.json**:
-{
-  "generated_at": "2024-01-20T10:30:00Z",
-  "user_structure": {
-    "table_name": "users",
-    "role_field": "role",
-    "registration_endpoint": "/api/auth/register",
-    "login_endpoint": "/api/auth/login"
-  },
-  "total_users": 4,
-  "verified_users": 4,
-  "users": [
-    {
-      "email": "admin@test.com",
-      "password": "AdminPass123!",
-      "role": "admin",
-      "name": "Admin User",
-      "verified": true,
-      "token": "jwt_token_here"
-    }
-    // ... create for each detected role
-  ],
-  "by_role": {
-    "admin": [{"email": "admin@test.com", "password": "AdminPass123!", "verified": true}],
-    "user": [{"email": "user@test.com", "password": "UserPass123!", "verified": true}]
-    // ... organize by role for easy browser agent access
-  }
-}
-**CRITICAL**: Use actual project structure, not template data!
-STEP 2: Create code_summary.json
-{
-  "tech_stack": ["React", "Vite", "TypeScript", "Express", "PostgreSQL", "Node.js"],
-  "features": [
-    {
-      "name": "User Authentication",
-      "description": "Login, logout, session management",
-      "files": ["src/components/Login.tsx", "src/api/auth.ts"]
-    },
-    {
-      "name": "Dashboard",
-      "description": "Main application dashboard",
-      "files": ["src/components/Dashboard.tsx"]
-    }
-  ],
-  "database_tables": ["users", "projects"],
-  "api_endpoints": ["/api/auth", "/api/users"]
-}
-STEP 3: test_cases.json 
-  "testCases": [
-    {
-      "id": "functional-app-test",
-      "name": "Functional Application Test",
-      "category": "functionality",
-      "priority": "high",
-      "description": "Verify the application has actual functionality beyond basic placeholder",
-      "steps": [
-        "Navigate to application",
-        "Verify multiple interactive elements exist (buttons, forms, links)",
-        "Check for proper navigation structure",
-        "Verify application has real features, not just 'Vite + React' text"
-      ],
-      "expectedOutcome": "Application shows functional features and interactivity",
-      "failureCondition": "If page only shows 'Vite + React' placeholder, this test should FAIL"
-    },
-    {
-      "id": "ui-components-test", 
-      "name": "UI Components Test",
-      "category": "interface",
-      "priority": "high",
-      "description": "Test that UI components are properly implemented",
-      "steps": [
-        "Check for buttons and verify they're clickable",
-        "Look for forms and input fields",
-        "Verify navigation menu exists",
-        "Test responsive design elements"
-      ],
-      "expectedOutcome": "Multiple interactive UI components found and functional"
-    },
-    {
-      "id": "content-quality-test",
-      "name": "Content Quality Test", 
-      "category": "content",
-      "priority": "high",
-      "description": "Verify application has meaningful content",
-      "steps": [
-        "Check page has substantial content beyond placeholder",
-        "Verify proper heading structure",
-        "Look for actual application features",
-        "Ensure professional appearance"
-      ],
-      "expectedOutcome": "Application demonstrates real functionality and professional design"
-    }
-  ]
-}
-CRITICAL REQUIREMENTS:
-1. You MUST create all 3 JSON files: code_summary.json, test_cases.json, and test_users.json
-2. Each file must be valid JSON
-3. The test_cases.json and test_users.json files are especially important - do not skip them
+Pay special attention to the "🔧 EXACT FIX NEEDED" sections above - these provide specific technical solutions that you should implement immediately.
+
+Focus on the exact issues reported by the intelligent Stagehand agent. The agent has analyzed the application and provided specific technical fixes. Implement these fixes precisely as recommended.
