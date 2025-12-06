@@ -1,0 +1,379 @@
+{
+  "project_name": "Authentication Application",
+  "generated_at": "2025-12-06T00:00:00Z",
+  "tech_stack": {
+    "frontend": [
+      "React 18.3.1",
+      "TypeScript 5.5.3",
+      "Vite 5.4.0",
+      "React Router DOM 6.26.0",
+      "Zustand 4.5.0 (State Management)",
+      "TanStack React Query 5.0.0",
+      "Axios 1.7.7",
+      "Tailwind CSS 3.4.8",
+      "Radix UI (Component Library)",
+      "Framer Motion 11.5.4"
+    ],
+    "backend": [
+      "Node.js",
+      "Express 4.19.2",
+      "TypeScript 5.8.2",
+      "PostgreSQL / PGLite 0.2.4",
+      "JWT (jsonwebtoken 9.0.2)",
+      "Bcrypt.js 2.4.3",
+      "Cors 2.8.5",
+      "Dotenv 16.4.5"
+    ],
+    "testing": [
+      "Vitest 3.2.4",
+      "Jest 29.7.0",
+      "Testing Library React 16.3.0",
+      "Supertest 6.3.3",
+      "JSDOM 26.1.0"
+    ]
+  },
+  "architecture": {
+    "type": "Full-stack monorepo",
+    "frontend_pattern": "SPA with protected routes",
+    "backend_pattern": "RESTful API with JWT authentication",
+    "state_management": "Zustand with persistence",
+    "database": "PostgreSQL (production) / PGLite (development)"
+  },
+  "features": [
+    {
+      "name": "User Authentication",
+      "description": "Complete authentication system with registration, login, and JWT token management",
+      "files": [
+        "backend/server.ts:161-260",
+        "vitereact/src/store/main.tsx",
+        "vitereact/src/components/views/UV_Login.tsx"
+      ],
+      "endpoints": [
+        "POST /api/auth/register",
+        "POST /api/auth/login",
+        "GET /api/auth/verify",
+        "GET /api/auth/me"
+      ],
+      "components": ["UV_Login"]
+    },
+    {
+      "name": "User Profile Management",
+      "description": "Update user profile information with authenticated access",
+      "files": [
+        "backend/server.ts:288-315",
+        "vitereact/src/store/main.tsx:226-235"
+      ],
+      "endpoints": ["PUT /api/auth/profile"],
+      "components": []
+    },
+    {
+      "name": "Protected Routes",
+      "description": "Route protection with authentication middleware and JWT verification",
+      "files": [
+        "backend/server.ts:97-122",
+        "vitereact/src/App.tsx:28-42"
+      ],
+      "endpoints": ["GET /api/protected"],
+      "components": ["ProtectedRoute"]
+    },
+    {
+      "name": "User Dashboard",
+      "description": "Protected dashboard showing user information and navigation",
+      "files": ["vitereact/src/components/views/UV_Dashboard.tsx"],
+      "endpoints": [],
+      "components": ["UV_Dashboard"]
+    },
+    {
+      "name": "State Persistence",
+      "description": "Persistent authentication state using Zustand with localStorage",
+      "files": ["vitereact/src/store/main.tsx:237-252"],
+      "endpoints": [],
+      "components": []
+    },
+    {
+      "name": "Health Check",
+      "description": "System health monitoring endpoint",
+      "files": ["backend/server.ts:331-337"],
+      "endpoints": ["GET /api/health"],
+      "components": []
+    }
+  ],
+  "database_schema": {
+    "tables": [
+      {
+        "name": "users",
+        "columns": [
+          {
+            "name": "id",
+            "type": "SERIAL PRIMARY KEY",
+            "description": "Auto-incrementing user identifier"
+          },
+          {
+            "name": "email",
+            "type": "VARCHAR(255) UNIQUE NOT NULL",
+            "description": "User email address (unique, stored lowercase)"
+          },
+          {
+            "name": "password",
+            "type": "VARCHAR(255) NOT NULL",
+            "description": "Bcrypt hashed password (12 salt rounds)"
+          },
+          {
+            "name": "name",
+            "type": "VARCHAR(255) NOT NULL",
+            "description": "User's full name"
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP",
+            "description": "Account creation timestamp"
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP",
+            "description": "Last update timestamp"
+          }
+        ],
+        "seed_data": null
+      }
+    ]
+  },
+  "api_endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "description": "Register a new user account",
+      "authentication": "None",
+      "request_body": {
+        "email": "string (required)",
+        "password": "string (required, min 6 chars)",
+        "name": "string (required)"
+      },
+      "response": {
+        "success": {
+          "status": 201,
+          "body": {
+            "message": "User created successfully",
+            "user": "User object without password",
+            "token": "JWT token (7 day expiry)"
+          }
+        },
+        "error": {
+          "status": "400/500",
+          "body": {
+            "message": "Error description"
+          }
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "description": "Authenticate existing user",
+      "authentication": "None",
+      "request_body": {
+        "email": "string (required)",
+        "password": "string (required)"
+      },
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "message": "Login successful",
+            "user": "User object without password",
+            "token": "JWT token (7 day expiry)"
+          }
+        },
+        "error": {
+          "status": "400/500",
+          "body": {
+            "message": "Invalid email or password"
+          }
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/verify",
+      "description": "Verify JWT token validity",
+      "authentication": "Bearer Token",
+      "request_body": null,
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "message": "Token is valid",
+            "user": "User object"
+          }
+        },
+        "error": {
+          "status": "401/403",
+          "body": {
+            "message": "Access token required / Invalid or expired token"
+          }
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "description": "Get current authenticated user",
+      "authentication": "Bearer Token",
+      "request_body": null,
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "user": "User object"
+          }
+        },
+        "error": {
+          "status": "401/403",
+          "body": {
+            "message": "Access token required / Invalid or expired token"
+          }
+        }
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/api/auth/profile",
+      "description": "Update user profile information",
+      "authentication": "Bearer Token",
+      "request_body": {
+        "name": "string (required)"
+      },
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "message": "Profile updated successfully",
+            "user": "Updated user object"
+          }
+        },
+        "error": {
+          "status": "400/401/403/500",
+          "body": {
+            "message": "Error description"
+          }
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/protected",
+      "description": "Example protected endpoint requiring authentication",
+      "authentication": "Bearer Token",
+      "request_body": null,
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "message": "This is a protected endpoint",
+            "user": "User object",
+            "timestamp": "ISO timestamp"
+          }
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "description": "Health check endpoint",
+      "authentication": "None",
+      "request_body": null,
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "status": "ok",
+            "timestamp": "ISO timestamp",
+            "message": "Backend is running"
+          }
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "description": "Backend root endpoint",
+      "authentication": "None",
+      "request_body": null,
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "message": "cofounder backend boilerplate :)"
+          }
+        }
+      }
+    }
+  ],
+  "frontend_routes": [
+    {
+      "path": "/login",
+      "component": "UV_Login",
+      "protected": false,
+      "description": "User login and registration page"
+    },
+    {
+      "path": "/dashboard",
+      "component": "UV_Dashboard",
+      "protected": true,
+      "description": "User dashboard with profile information"
+    },
+    {
+      "path": "*",
+      "component": "Navigate to /dashboard",
+      "protected": false,
+      "description": "Catch-all redirect to dashboard"
+    }
+  ],
+  "environment_variables": {
+    "backend": [
+      "DATABASE_URL - PostgreSQL connection string",
+      "PGHOST - PostgreSQL host",
+      "PGDATABASE - PostgreSQL database name",
+      "PGUSER - PostgreSQL user",
+      "PGPASSWORD - PostgreSQL password",
+      "PGPORT - PostgreSQL port (default: 5432)",
+      "JWT_SECRET - Secret key for JWT signing (default: 'your-secret-key-change-in-production')",
+      "PORT - Server port (default: 3000)",
+      "FRONTEND_URL - Frontend URL for CORS (default: http://localhost:5173)"
+    ],
+    "frontend": [
+      "VITE_API_BASE_URL - Backend API base URL (default: http://localhost:3000)"
+    ]
+  },
+  "key_files": {
+    "backend": {
+      "server.ts": "Main Express server with all API endpoints and middleware",
+      "schema.ts": "Zod schema boilerplate (currently minimal)",
+      "db.sql": "Database schema SQL file",
+      "package.json": "Backend dependencies and scripts"
+    },
+    "frontend": {
+      "src/App.tsx": "Main application component with routing and protected routes",
+      "src/store/main.tsx": "Zustand store with authentication state management",
+      "src/components/views/UV_Login.tsx": "Login and registration view",
+      "src/components/views/UV_Dashboard.tsx": "Protected dashboard view",
+      "package.json": "Frontend dependencies and scripts"
+    }
+  },
+  "security_features": [
+    "JWT token-based authentication",
+    "Bcrypt password hashing with 12 salt rounds",
+    "Protected API routes with authentication middleware",
+    "CORS configuration",
+    "Token expiration (7 days)",
+    "Password minimum length validation (6 characters)",
+    "Email uniqueness enforcement",
+    "Lowercase email storage for consistency"
+  ],
+  "development_setup": {
+    "database": "Uses PGLite for local development when DATABASE_URL is not set",
+    "backend_start": "npm run start (nodemon with tsx)",
+    "frontend_start": "npm run dev (Vite dev server)",
+    "concurrent_dev": "Can use concurrently to run both servers"
+  }
+}

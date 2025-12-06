@@ -1,0 +1,726 @@
+{
+  "generated_at": "2025-12-06T00:00:00Z",
+  "project_name": "Authentication Application Test Suite",
+  "total_test_cases": 35,
+  "categories": [
+    "functionality",
+    "interface",
+    "authentication",
+    "api",
+    "security",
+    "performance",
+    "content",
+    "navigation"
+  ],
+  "testCases": [
+    {
+      "id": "functional-app-test",
+      "name": "Functional Application Test",
+      "category": "functionality",
+      "priority": "critical",
+      "description": "Verify the application has actual functionality beyond basic placeholder",
+      "steps": [
+        "Navigate to https://123create-me-a-food-truck-website.launchpulse.ai",
+        "Verify multiple interactive elements exist (login form, buttons, inputs)",
+        "Check for proper navigation structure and routing",
+        "Verify application has real authentication features, not just 'Vite + React' placeholder text",
+        "Confirm presence of login/register forms",
+        "Test that forms are interactive and functional"
+      ],
+      "expectedOutcome": "Application shows functional authentication features with interactive login/register forms, not a default Vite template",
+      "failureCondition": "If page only shows 'Vite + React' placeholder without functional features, this test should FAIL"
+    },
+    {
+      "id": "ui-components-test",
+      "name": "UI Components Test",
+      "category": "interface",
+      "priority": "high",
+      "description": "Test that UI components are properly implemented and interactive",
+      "steps": [
+        "Navigate to the login page",
+        "Verify email input field is present and accepts input",
+        "Verify password input field is present and masks input",
+        "Verify name input field appears when switching to register mode",
+        "Check that submit button is clickable and responsive",
+        "Verify toggle between login and register modes works",
+        "Test form validation messages appear for invalid inputs",
+        "Check responsive design on different viewport sizes"
+      ],
+      "expectedOutcome": "All UI components are present, interactive, and properly styled with Tailwind CSS"
+    },
+    {
+      "id": "content-quality-test",
+      "name": "Content Quality Test",
+      "category": "content",
+      "priority": "high",
+      "description": "Verify application has meaningful content and professional appearance",
+      "steps": [
+        "Check page has substantial content beyond placeholder",
+        "Verify proper heading structure (h1, h2 tags)",
+        "Look for clear call-to-action elements",
+        "Verify professional styling and layout",
+        "Check for loading states and error messages",
+        "Ensure consistent branding and color scheme"
+      ],
+      "expectedOutcome": "Application demonstrates professional design with clear purpose and polished UI"
+    },
+    {
+      "id": "auth-001-user-registration",
+      "name": "User Registration - Valid Data",
+      "category": "authentication",
+      "priority": "critical",
+      "description": "Test successful user registration with valid credentials",
+      "steps": [
+        "Navigate to login page",
+        "Click 'Don't have an account? Sign up' link",
+        "Enter valid name: 'Test User'",
+        "Enter valid email: 'testuser@example.com'",
+        "Enter valid password (6+ characters): 'TestPass123!'",
+        "Click 'Create account' button",
+        "Verify successful registration response",
+        "Verify JWT token is received",
+        "Verify automatic redirect to dashboard",
+        "Verify user data is displayed on dashboard"
+      ],
+      "expectedOutcome": "User is successfully registered, receives JWT token, and is redirected to protected dashboard",
+      "testData": {
+        "email": "testuser@example.com",
+        "password": "TestPass123!",
+        "name": "Test User"
+      }
+    },
+    {
+      "id": "auth-002-user-login",
+      "name": "User Login - Valid Credentials",
+      "category": "authentication",
+      "priority": "critical",
+      "description": "Test successful login with existing user credentials",
+      "steps": [
+        "Ensure user is registered first (use auth-001 test user or create new)",
+        "Navigate to login page",
+        "Enter registered email",
+        "Enter correct password",
+        "Click 'Sign in' button",
+        "Verify successful login response",
+        "Verify JWT token is received and stored",
+        "Verify redirect to dashboard",
+        "Verify user information is displayed correctly"
+      ],
+      "expectedOutcome": "User successfully logs in and accesses protected dashboard with valid session",
+      "testData": {
+        "email": "testuser@example.com",
+        "password": "TestPass123!"
+      }
+    },
+    {
+      "id": "auth-003-invalid-credentials",
+      "name": "User Login - Invalid Credentials",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Test login failure with incorrect credentials",
+      "steps": [
+        "Navigate to login page",
+        "Enter email: 'nonexistent@example.com'",
+        "Enter password: 'WrongPassword123'",
+        "Click 'Sign in' button",
+        "Verify error message is displayed",
+        "Verify message states 'Invalid email or password'",
+        "Verify user remains on login page",
+        "Verify no token is stored",
+        "Verify no redirect occurs"
+      ],
+      "expectedOutcome": "Login fails with appropriate error message and user remains on login page",
+      "testData": {
+        "email": "nonexistent@example.com",
+        "password": "WrongPassword123"
+      }
+    },
+    {
+      "id": "auth-004-password-validation",
+      "name": "Registration - Password Too Short",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Test password validation during registration",
+      "steps": [
+        "Navigate to registration page",
+        "Enter valid name and email",
+        "Enter password with less than 6 characters: 'Pass1'",
+        "Click 'Create account' button",
+        "Verify error message appears",
+        "Verify message indicates minimum password length requirement",
+        "Verify registration does not complete",
+        "Verify user remains on registration page"
+      ],
+      "expectedOutcome": "Registration fails with error message about password length requirement (minimum 6 characters)",
+      "testData": {
+        "email": "test@example.com",
+        "password": "Pass1",
+        "name": "Test User"
+      }
+    },
+    {
+      "id": "auth-005-duplicate-email",
+      "name": "Registration - Duplicate Email",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Test that duplicate email registration is prevented",
+      "steps": [
+        "Register a user with email 'duplicate@example.com'",
+        "Log out",
+        "Navigate to registration page",
+        "Attempt to register again with same email",
+        "Enter different name and password but same email",
+        "Click 'Create account' button",
+        "Verify error message appears",
+        "Verify message indicates email already exists",
+        "Verify registration fails"
+      ],
+      "expectedOutcome": "Registration fails with error message indicating email is already registered",
+      "testData": {
+        "email": "duplicate@example.com",
+        "password": "DifferentPass123!",
+        "name": "Different User"
+      }
+    },
+    {
+      "id": "auth-006-logout",
+      "name": "User Logout",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Test logout functionality and session clearing",
+      "steps": [
+        "Login as valid user",
+        "Navigate to dashboard",
+        "Click 'Sign out' button",
+        "Verify redirect to login page",
+        "Verify JWT token is removed from storage",
+        "Verify user cannot access protected routes",
+        "Attempt to navigate to /dashboard",
+        "Verify redirect back to login page"
+      ],
+      "expectedOutcome": "User is logged out, token cleared, and protected routes become inaccessible"
+    },
+    {
+      "id": "auth-007-token-persistence",
+      "name": "Token Persistence After Refresh",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Test that authentication persists after page refresh",
+      "steps": [
+        "Login as valid user",
+        "Navigate to dashboard",
+        "Verify user is logged in and dashboard is displayed",
+        "Refresh the page (F5 or browser refresh)",
+        "Verify user remains authenticated",
+        "Verify dashboard still displays user information",
+        "Verify no redirect to login page occurs"
+      ],
+      "expectedOutcome": "User session persists after page refresh using Zustand persistence"
+    },
+    {
+      "id": "api-001-health-check",
+      "name": "API Health Check",
+      "category": "api",
+      "priority": "high",
+      "description": "Test backend health endpoint",
+      "steps": [
+        "Send GET request to /api/health",
+        "Verify response status is 200",
+        "Verify response contains 'status': 'ok'",
+        "Verify response contains timestamp",
+        "Verify response contains message 'Backend is running'"
+      ],
+      "expectedOutcome": "Health endpoint returns 200 status with confirmation backend is operational",
+      "endpoint": "GET /api/health"
+    },
+    {
+      "id": "api-002-register-endpoint",
+      "name": "API Register Endpoint Test",
+      "category": "api",
+      "priority": "critical",
+      "description": "Test registration API endpoint directly",
+      "steps": [
+        "Send POST request to /api/auth/register",
+        "Include JSON body with email, password, and name",
+        "Verify response status is 201",
+        "Verify response contains user object without password",
+        "Verify response contains JWT token",
+        "Verify user.email matches request email (lowercase)",
+        "Verify user.name matches request name",
+        "Verify user.id is a number",
+        "Verify user.created_at is a valid timestamp"
+      ],
+      "expectedOutcome": "API returns 201 status with user object and valid JWT token",
+      "endpoint": "POST /api/auth/register",
+      "testData": {
+        "email": "apitest@example.com",
+        "password": "ApiPass123!",
+        "name": "API Test User"
+      }
+    },
+    {
+      "id": "api-003-login-endpoint",
+      "name": "API Login Endpoint Test",
+      "category": "api",
+      "priority": "critical",
+      "description": "Test login API endpoint directly",
+      "steps": [
+        "Register a user first via /api/auth/register",
+        "Send POST request to /api/auth/login",
+        "Include JSON body with email and password",
+        "Verify response status is 200",
+        "Verify response contains 'message': 'Login successful'",
+        "Verify response contains user object",
+        "Verify response contains JWT token",
+        "Verify token is different from registration token (new expiry)"
+      ],
+      "expectedOutcome": "API returns 200 status with user object and valid JWT token",
+      "endpoint": "POST /api/auth/login"
+    },
+    {
+      "id": "api-004-verify-token",
+      "name": "API Token Verification",
+      "category": "api",
+      "priority": "high",
+      "description": "Test token verification endpoint",
+      "steps": [
+        "Login and obtain valid JWT token",
+        "Send GET request to /api/auth/verify",
+        "Include Authorization header: 'Bearer <token>'",
+        "Verify response status is 200",
+        "Verify response contains 'message': 'Token is valid'",
+        "Verify response contains user object",
+        "Verify user data matches authenticated user"
+      ],
+      "expectedOutcome": "Verification endpoint confirms token validity and returns user data",
+      "endpoint": "GET /api/auth/verify"
+    },
+    {
+      "id": "api-005-get-current-user",
+      "name": "API Get Current User",
+      "category": "api",
+      "priority": "high",
+      "description": "Test getting current authenticated user",
+      "steps": [
+        "Login and obtain valid JWT token",
+        "Send GET request to /api/auth/me",
+        "Include Authorization header: 'Bearer <token>'",
+        "Verify response status is 200",
+        "Verify response contains user object",
+        "Verify all user fields are present (id, email, name, created_at)"
+      ],
+      "expectedOutcome": "Endpoint returns current user information",
+      "endpoint": "GET /api/auth/me"
+    },
+    {
+      "id": "api-006-update-profile",
+      "name": "API Update User Profile",
+      "category": "api",
+      "priority": "high",
+      "description": "Test profile update endpoint",
+      "steps": [
+        "Login and obtain valid JWT token",
+        "Send PUT request to /api/auth/profile",
+        "Include Authorization header: 'Bearer <token>'",
+        "Include JSON body with new name: 'Updated Name'",
+        "Verify response status is 200",
+        "Verify response contains 'message': 'Profile updated successfully'",
+        "Verify response contains updated user object",
+        "Verify user.name matches new name",
+        "Send GET request to /api/auth/me to confirm persistence"
+      ],
+      "expectedOutcome": "Profile is successfully updated and changes persist",
+      "endpoint": "PUT /api/auth/profile"
+    },
+    {
+      "id": "api-007-protected-endpoint",
+      "name": "API Protected Endpoint Access",
+      "category": "api",
+      "priority": "high",
+      "description": "Test protected endpoint with valid authentication",
+      "steps": [
+        "Login and obtain valid JWT token",
+        "Send GET request to /api/protected",
+        "Include Authorization header: 'Bearer <token>'",
+        "Verify response status is 200",
+        "Verify response contains message",
+        "Verify response contains user object",
+        "Verify response contains timestamp"
+      ],
+      "expectedOutcome": "Protected endpoint accessible with valid token",
+      "endpoint": "GET /api/protected"
+    },
+    {
+      "id": "security-001-no-token-access",
+      "name": "Protected Route Without Token",
+      "category": "security",
+      "priority": "critical",
+      "description": "Verify protected routes reject requests without authentication",
+      "steps": [
+        "Clear all tokens from storage/headers",
+        "Send GET request to /api/auth/verify without Authorization header",
+        "Verify response status is 401",
+        "Verify error message indicates token is required",
+        "Repeat for /api/auth/me endpoint",
+        "Repeat for /api/protected endpoint",
+        "Verify all protected endpoints return 401"
+      ],
+      "expectedOutcome": "All protected endpoints return 401 Unauthorized without token"
+    },
+    {
+      "id": "security-002-invalid-token",
+      "name": "Protected Route With Invalid Token",
+      "category": "security",
+      "priority": "critical",
+      "description": "Verify protected routes reject invalid tokens",
+      "steps": [
+        "Send GET request to /api/auth/verify",
+        "Include Authorization header with invalid token: 'Bearer invalid_token_123'",
+        "Verify response status is 403",
+        "Verify error message indicates invalid or expired token",
+        "Test with malformed token",
+        "Test with expired token (if possible to generate)"
+      ],
+      "expectedOutcome": "Protected endpoints return 403 Forbidden with invalid token"
+    },
+    {
+      "id": "security-003-password-hashing",
+      "name": "Password Security - Hashing",
+      "category": "security",
+      "priority": "critical",
+      "description": "Verify passwords are properly hashed and not stored in plaintext",
+      "steps": [
+        "Register a new user with password 'TestPassword123'",
+        "Verify registration succeeds",
+        "Verify password is NOT returned in response",
+        "Login with same credentials to confirm password works",
+        "Note: Direct database verification would require DB access to confirm bcrypt hashing"
+      ],
+      "expectedOutcome": "Passwords are never exposed in API responses and hashing is properly implemented"
+    },
+    {
+      "id": "security-004-email-case-insensitive",
+      "name": "Email Case Insensitivity",
+      "category": "security",
+      "priority": "medium",
+      "description": "Verify email addresses are case-insensitive",
+      "steps": [
+        "Register user with email 'TestUser@Example.COM'",
+        "Verify registration succeeds",
+        "Log out",
+        "Login with lowercase email 'testuser@example.com'",
+        "Verify login succeeds",
+        "Confirm same user account is accessed"
+      ],
+      "expectedOutcome": "Email authentication is case-insensitive (emails stored as lowercase)"
+    },
+    {
+      "id": "security-005-cors-configuration",
+      "name": "CORS Configuration",
+      "category": "security",
+      "priority": "medium",
+      "description": "Verify CORS is properly configured",
+      "steps": [
+        "Send request from allowed origin",
+        "Verify CORS headers are present",
+        "Check Access-Control-Allow-Origin header",
+        "Verify credentials are allowed if needed"
+      ],
+      "expectedOutcome": "CORS is configured to allow frontend access while maintaining security"
+    },
+    {
+      "id": "nav-001-route-protection",
+      "name": "Protected Route Redirection",
+      "category": "navigation",
+      "priority": "high",
+      "description": "Test that unauthenticated users are redirected from protected routes",
+      "steps": [
+        "Ensure user is logged out",
+        "Attempt to navigate directly to /dashboard",
+        "Verify automatic redirect to /login",
+        "Login with valid credentials",
+        "Verify redirect to /dashboard",
+        "Verify dashboard content is displayed"
+      ],
+      "expectedOutcome": "Unauthenticated users cannot access /dashboard and are redirected to login"
+    },
+    {
+      "id": "nav-002-login-redirect",
+      "name": "Authenticated User Login Access",
+      "category": "navigation",
+      "priority": "medium",
+      "description": "Test behavior when authenticated user visits login page",
+      "steps": [
+        "Login as valid user",
+        "Verify redirect to dashboard",
+        "Manually navigate to /login",
+        "Verify current behavior (stay on login or redirect to dashboard)",
+        "Note: This tests the expected UX pattern"
+      ],
+      "expectedOutcome": "Application handles authenticated user navigation appropriately"
+    },
+    {
+      "id": "nav-003-catch-all-route",
+      "name": "Catch-All Route Behavior",
+      "category": "navigation",
+      "priority": "medium",
+      "description": "Test catch-all route redirects to appropriate page",
+      "steps": [
+        "Navigate to non-existent route: /nonexistent",
+        "Verify redirect occurs",
+        "Check if redirected to /dashboard or /login based on auth status",
+        "Test with authenticated user",
+        "Test with unauthenticated user"
+      ],
+      "expectedOutcome": "Non-existent routes redirect to dashboard (then to login if not authenticated)"
+    },
+    {
+      "id": "ui-001-loading-states",
+      "name": "Loading States Display",
+      "category": "interface",
+      "priority": "medium",
+      "description": "Test loading indicators during async operations",
+      "steps": [
+        "Navigate to login page",
+        "Enter credentials and submit",
+        "Verify loading spinner appears on submit button",
+        "Verify button text changes to 'Signing in...'",
+        "Verify button is disabled during loading",
+        "Test same behavior for registration",
+        "Verify page-level loading spinner on initial auth check"
+      ],
+      "expectedOutcome": "Loading states provide clear feedback during authentication operations"
+    },
+    {
+      "id": "ui-002-error-display",
+      "name": "Error Message Display",
+      "category": "interface",
+      "priority": "high",
+      "description": "Test error message display for various error scenarios",
+      "steps": [
+        "Attempt login with invalid credentials",
+        "Verify error message appears in red banner",
+        "Verify error message is user-friendly",
+        "Test error display for short password",
+        "Test error display for duplicate email",
+        "Verify error message clears when toggling between login/register",
+        "Verify error message clears on successful submission"
+      ],
+      "expectedOutcome": "Error messages are clearly displayed and user-friendly"
+    },
+    {
+      "id": "ui-003-form-toggle",
+      "name": "Login/Register Form Toggle",
+      "category": "interface",
+      "priority": "medium",
+      "description": "Test toggling between login and registration modes",
+      "steps": [
+        "Navigate to login page",
+        "Verify 'Sign in' form is displayed",
+        "Click 'Don't have an account? Sign up'",
+        "Verify form changes to registration mode",
+        "Verify 'Name' field appears",
+        "Verify button text changes to 'Create account'",
+        "Click 'Already have an account? Sign in'",
+        "Verify form returns to login mode",
+        "Verify form fields are cleared on toggle"
+      ],
+      "expectedOutcome": "Form seamlessly toggles between login and registration with appropriate field changes"
+    },
+    {
+      "id": "ui-004-password-masking",
+      "name": "Password Field Masking",
+      "category": "interface",
+      "priority": "medium",
+      "description": "Test password input field security",
+      "steps": [
+        "Navigate to login page",
+        "Click on password field",
+        "Type a password",
+        "Verify characters are masked (displayed as dots/asterisks)",
+        "Verify actual password is not visible",
+        "Check HTML input type is 'password'"
+      ],
+      "expectedOutcome": "Password input is properly masked for security"
+    },
+    {
+      "id": "ui-005-responsive-design",
+      "name": "Responsive Design Test",
+      "category": "interface",
+      "priority": "medium",
+      "description": "Test UI responsiveness across different screen sizes",
+      "steps": [
+        "Open application in desktop viewport (1920x1080)",
+        "Verify layout is appropriate for large screens",
+        "Resize to tablet viewport (768x1024)",
+        "Verify responsive adjustments",
+        "Resize to mobile viewport (375x667)",
+        "Verify mobile-friendly layout",
+        "Check form inputs are appropriately sized",
+        "Verify dashboard navigation is responsive"
+      ],
+      "expectedOutcome": "Application is fully responsive and usable on all device sizes"
+    },
+    {
+      "id": "ui-006-dashboard-display",
+      "name": "Dashboard User Info Display",
+      "category": "interface",
+      "priority": "high",
+      "description": "Test dashboard displays user information correctly",
+      "steps": [
+        "Login as user with name 'John Doe' and email 'john@example.com'",
+        "Navigate to dashboard",
+        "Verify welcome message: 'Welcome back, John Doe!'",
+        "Verify email is displayed correctly",
+        "Verify user ID is displayed",
+        "Check information is in styled info box",
+        "Verify navigation bar shows user name or profile link"
+      ],
+      "expectedOutcome": "Dashboard correctly displays all user information with proper formatting"
+    },
+    {
+      "id": "perf-001-token-validation",
+      "name": "Token Validation Performance",
+      "category": "performance",
+      "priority": "medium",
+      "description": "Test token validation completes quickly",
+      "steps": [
+        "Login to obtain token",
+        "Measure time for /api/auth/verify request",
+        "Verify response time is under 500ms",
+        "Test with multiple sequential requests",
+        "Verify consistent performance"
+      ],
+      "expectedOutcome": "Token validation completes within acceptable time limits"
+    },
+    {
+      "id": "perf-002-initial-load",
+      "name": "Initial Page Load Performance",
+      "category": "performance",
+      "priority": "medium",
+      "description": "Test initial application load time",
+      "steps": [
+        "Clear browser cache",
+        "Navigate to application URL",
+        "Measure time until page is interactive",
+        "Verify time to first contentful paint",
+        "Check JavaScript bundle size is reasonable",
+        "Verify images and assets load efficiently"
+      ],
+      "expectedOutcome": "Application loads within 3 seconds on standard connection"
+    },
+    {
+      "id": "data-001-user-data-integrity",
+      "name": "User Data Integrity",
+      "category": "functionality",
+      "priority": "high",
+      "description": "Test data consistency across operations",
+      "steps": [
+        "Register user with specific name and email",
+        "Verify registration response contains correct data",
+        "Login with same credentials",
+        "Verify login response contains same user ID",
+        "Update profile name",
+        "Verify updated name persists",
+        "Logout and login again",
+        "Verify all data remains consistent"
+      ],
+      "expectedOutcome": "User data remains consistent across all operations"
+    },
+    {
+      "id": "data-002-timestamp-accuracy",
+      "name": "Timestamp Accuracy",
+      "category": "functionality",
+      "priority": "low",
+      "description": "Test created_at timestamp is accurate",
+      "steps": [
+        "Note current time before registration",
+        "Register new user",
+        "Check created_at timestamp in response",
+        "Verify timestamp is within 5 seconds of current time",
+        "Verify timestamp format is ISO 8601 or valid date string"
+      ],
+      "expectedOutcome": "Timestamps are accurate and properly formatted"
+    },
+    {
+      "id": "edge-001-empty-fields",
+      "name": "Empty Field Validation",
+      "category": "functionality",
+      "priority": "high",
+      "description": "Test form validation for empty required fields",
+      "steps": [
+        "Navigate to login page",
+        "Click submit without entering any data",
+        "Verify HTML5 validation prevents submission",
+        "Switch to register mode",
+        "Attempt submission with empty fields",
+        "Verify validation for all required fields",
+        "Test partial completion (email only, password only)"
+      ],
+      "expectedOutcome": "Form validation prevents submission of empty required fields"
+    },
+    {
+      "id": "edge-002-special-characters",
+      "name": "Special Characters in Input",
+      "category": "functionality",
+      "priority": "medium",
+      "description": "Test handling of special characters in user inputs",
+      "steps": [
+        "Register user with name containing special chars: \"O'Neil\"",
+        "Verify registration succeeds",
+        "Register user with email containing plus: \"test+tag@example.com\"",
+        "Verify registration succeeds",
+        "Test password with various special characters",
+        "Verify all special characters are handled correctly"
+      ],
+      "expectedOutcome": "Application correctly handles special characters in all input fields"
+    }
+  ],
+  "testEnvironments": [
+    {
+      "name": "Production",
+      "frontend_url": "https://123create-me-a-food-truck-website.launchpulse.ai",
+      "backend_url": "https://123create-me-a-food-truck-website.launchpulse.ai",
+      "database": "PostgreSQL"
+    },
+    {
+      "name": "Local Development",
+      "frontend_url": "http://localhost:5173",
+      "backend_url": "http://localhost:3000",
+      "database": "PGLite"
+    }
+  ],
+  "testExecutionOrder": {
+    "phase1_critical": [
+      "functional-app-test",
+      "api-001-health-check",
+      "auth-001-user-registration",
+      "auth-002-user-login"
+    ],
+    "phase2_core_features": [
+      "auth-003-invalid-credentials",
+      "auth-004-password-validation",
+      "auth-005-duplicate-email",
+      "auth-006-logout",
+      "nav-001-route-protection"
+    ],
+    "phase3_security": [
+      "security-001-no-token-access",
+      "security-002-invalid-token",
+      "security-003-password-hashing",
+      "api-004-verify-token"
+    ],
+    "phase4_comprehensive": [
+      "All remaining test cases"
+    ]
+  },
+  "automationRecommendations": {
+    "tools": [
+      "Playwright or Cypress for E2E testing",
+      "Vitest for component and unit testing",
+      "Jest/Supertest for API testing",
+      "Postman/Insomnia for manual API testing"
+    ],
+    "cicd": "Run phase1_critical tests on every commit, full suite on PR merge"
+  }
+}

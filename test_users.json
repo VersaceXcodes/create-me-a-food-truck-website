@@ -1,0 +1,147 @@
+{
+  "generated_at": "2025-12-06T00:00:00Z",
+  "user_structure": {
+    "table_name": "users",
+    "role_field": null,
+    "registration_endpoint": "/api/auth/register",
+    "login_endpoint": "/api/auth/login",
+    "verify_endpoint": "/api/auth/verify",
+    "profile_endpoint": "/api/auth/profile",
+    "auth_method": "JWT Bearer Token",
+    "password_min_length": 6,
+    "notes": "No role-based system detected in database schema. Single user type with basic authentication."
+  },
+  "total_users": 4,
+  "verified_users": 0,
+  "users": [
+    {
+      "email": "testuser1@test.com",
+      "password": "TestPass123!",
+      "name": "Test User One",
+      "verified": false,
+      "token": null,
+      "description": "Primary test user for standard authentication flows"
+    },
+    {
+      "email": "testuser2@test.com",
+      "password": "TestPass456!",
+      "name": "Test User Two",
+      "verified": false,
+      "token": null,
+      "description": "Secondary test user for multi-user scenarios"
+    },
+    {
+      "email": "admin@test.com",
+      "password": "AdminPass123!",
+      "name": "Admin Test User",
+      "verified": false,
+      "token": null,
+      "description": "Test user with admin-style naming for future role implementation"
+    },
+    {
+      "email": "demo@test.com",
+      "password": "DemoPass123!",
+      "name": "Demo User",
+      "verified": false,
+      "token": null,
+      "description": "Demo user for showcasing application features"
+    }
+  ],
+  "authentication_flow": {
+    "registration": {
+      "endpoint": "/api/auth/register",
+      "method": "POST",
+      "required_fields": ["email", "password", "name"],
+      "response": {
+        "user": {
+          "id": "number",
+          "email": "string",
+          "name": "string",
+          "created_at": "timestamp"
+        },
+        "token": "JWT string"
+      }
+    },
+    "login": {
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "required_fields": ["email", "password"],
+      "response": {
+        "user": {
+          "id": "number",
+          "email": "string",
+          "name": "string",
+          "created_at": "timestamp"
+        },
+        "token": "JWT string"
+      }
+    },
+    "token_verification": {
+      "endpoint": "/api/auth/verify",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer <token>"
+      },
+      "response": {
+        "message": "Token is valid",
+        "user": "user object"
+      }
+    }
+  },
+  "test_scenarios": [
+    {
+      "scenario": "New User Registration",
+      "steps": [
+        "POST /api/auth/register with email, password, and name",
+        "Verify response contains user object and JWT token",
+        "Save token for subsequent requests",
+        "Verify user can access protected routes with token"
+      ]
+    },
+    {
+      "scenario": "User Login",
+      "steps": [
+        "Register a new user first (if not exists)",
+        "POST /api/auth/login with email and password",
+        "Verify response contains user object and JWT token",
+        "Use token to access protected endpoints"
+      ]
+    },
+    {
+      "scenario": "Token Verification",
+      "steps": [
+        "Obtain valid JWT token from login/register",
+        "GET /api/auth/verify with Authorization header",
+        "Verify response confirms token validity",
+        "Verify user data is returned correctly"
+      ]
+    },
+    {
+      "scenario": "Profile Update",
+      "steps": [
+        "Login and obtain JWT token",
+        "PUT /api/auth/profile with new name",
+        "Verify response contains updated user data",
+        "GET /api/auth/me to confirm update persisted"
+      ]
+    },
+    {
+      "scenario": "Protected Route Access",
+      "steps": [
+        "Login and obtain JWT token",
+        "GET /api/protected with Authorization header",
+        "Verify access granted and data returned",
+        "Test without token to verify 401 response"
+      ]
+    }
+  ],
+  "notes": [
+    "No seed data found in db.sql - users must be created via API",
+    "Database uses bcrypt password hashing with 12 salt rounds",
+    "JWT tokens expire after 7 days",
+    "All endpoints use JSON request/response format",
+    "Passwords must be at least 6 characters long",
+    "Email addresses are stored in lowercase and trimmed",
+    "No role-based access control detected in current implementation"
+  ]
+}
