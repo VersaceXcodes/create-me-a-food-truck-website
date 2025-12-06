@@ -1,0 +1,28 @@
+
+> backend@1.0.0 dev
+> tsx server.ts
+
+Using PGLite for local database
+Database initialized successfully
+node:events:495
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at __node_internal_captureLargerStackTrace (node:internal/errors:496:5)
+    at __node_internal_uvExceptionWithHostPort (node:internal/errors:593:12)
+    at Server.setupListenHandle [as _listen2] (node:net:1817:16)
+    at listenInCluster (node:net:1865:12)
+    at doListen (node:net:2014:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1844:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+
+Node.js v18.20.8

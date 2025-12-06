@@ -1,0 +1,149 @@
+REVIEWER: Cross-cutting product QA for request/response alignment and runtime stability
+
+Context Summary:
+{
+  "projectId": "create-me-a-food-truck-website",
+  "lastAccessed": "2025-12-06T18:54:19.198Z",
+  "validationAttempts": 0,
+  "commonIssues": [],
+  "resolvedIssues": [],
+  "dependencies": [],
+  "missingDependencies": [],
+  "knownFileCount": 0,
+  "keyFindings": []
+}
+
+Project Structure:
+FULL PROJECT STRUCTURE CONTEXT for Agent:
+=====================================
+
+Working Directory: /app
+
+PROJECT DIRECTORIES:
+/app
+/app/.git
+/app/.git/info
+/app/.git/branches
+/app/.git/hooks
+/app/.git/refs
+/app/.git/refs/heads
+/app/.git/refs/tags
+/app/.git/refs/remotes
+/app/.git/objects
+/app/.git/objects/pack
+/app/.git/objects/info
+/app/.git/logs
+/app/.git/logs/refs
+/app/backend
+/app/vitereact
+/app/vitereact/src
+/app/vitereact/src/assets
+/app/vitereact/src/components
+/app/vitereact/src/hooks
+
+
+KEY PROJECT FILES:
+/app/README.md
+/app/backend/initdb.js
+/app/backend/jest.config.ts
+/app/backend/package-lock.json
+/app/backend/package.json
+/app/backend/schema.ts
+/app/backend/server.test.ts
+/app/backend/server.ts
+/app/backend/tsconfig.json
+/app/package.json
+/app/vitereact/README.md
+/app/vitereact/components.json
+/app/vitereact/eslint.config.js
+/app/vitereact/package.json
+/app/vitereact/postcss.config.js
+/app/vitereact/src/App.tsx
+/app/vitereact/src/AppWrapper.tsx
+/app/vitereact/src/components/ui/accordion.tsx
+/app/vitereact/src/components/ui/alert.tsx
+/app/vitereact/src/components/ui/aspect-ratio.tsx
+/app/vitereact/src/components/ui/avatar.tsx
+/app/vitereact/src/components/ui/badge.tsx
+/app/vitereact/src/components/ui/breadcrumb.tsx
+/app/vitereact/src/components/ui/button.tsx
+/app/vitereact/src/components/ui/calendar.tsx
+/app/vitereact/src/components/ui/card.tsx
+/app/vitereact/src/components/ui/carousel.tsx
+/app/vitereact/src/components/ui/chart.tsx
+/app/vitereact/src/components/ui/checkbox.tsx
+/app/vitereact/src/components/ui/collapsible.tsx
+/app/vitereact/src/components/ui/command.tsx
+/app/vitereact/src/components/ui/context-menu.tsx
+/app/vitereact/src/components/ui/drawer.tsx
+/app/vitereact/src/components/ui/dropdown-menu.tsx
+/app/vitereact/src/components/ui/form.tsx
+/app/vitereact/src/components/ui/hover-card.tsx
+/app/vitereact/src/components/ui/input-otp.tsx
+/app/vitereact/src/components/ui/input.tsx
+/app/vitereact/src/components/ui/label.tsx
+/app/vitereact/src/components/ui/menubar.tsx
+/app/vitereact/src/components/ui/navigation-menu.tsx
+/app/vitereact/src/components/ui/pagination.tsx
+/app/vitereact/src/components/ui/popover.tsx
+/app/vitereact/src/components/ui/progress.tsx
+/app/vitereact/src/components/ui/radio-group.tsx
+/app/vitereact/src/components/ui/resizable.tsx
+/app/vitereact/src/components/ui/scroll-area.tsx
+/app/vitereact/src/components/ui/select.tsx
+/app/vitereact/src/components/ui/separator.tsx
+/app/vitereact/src/components/ui/sheet.tsx
+
+
+FRONTEND (vitereact) PACKAGE.JSON:
+  Scripts: dev, build, lint, preview
+  Dependencies: 60 packages
+  DevDependencies: 16 packages
+  Key Dependencies: @hookform/resolvers, @radix-ui/react-accordion, @radix-ui/react-alert-dialog, @radix-ui/react-aspect-ratio, @radix-ui/react-avatar, @radix-ui/react-checkbox, @radix-ui/react-collapsible, @radix-ui/react-context-menu, @radix-ui/react-dialog, @radix-ui/react-dropdown-menu
+
+BACKEND PACKAGE.JSON:
+  Scripts: start, build, dev, test, test:watch, test:coverage
+  Dependencies: 13 packages
+  Key Dependencies: @electric-sql/pglite, @types/bcryptjs, bcryptjs, cors, dotenv, express, jsonwebtoken, morgan, pg, ts-node
+
+ROOT PACKAGE.JSON:
+  Scripts: dev
+
+BACKEND SCHEMA AVAILABLE:
+  Location: /app/backend/schema.ts
+  Size: 53 characters
+  Contains Zod schemas for type validation
+
+BACKEND SERVER AVAILABLE:
+  Location: /app/backend/server.ts
+  Size: 7441 characters
+  Contains actual API endpoints and implementations
+
+PROTECTED DIRECTORIES (DO NOT MODIFY):
+  - /app/vitereact/src/components/ui/** (UI library)
+  - /app/node_modules/** (Dependencies)
+  - /app/.git/** (Version control)
+
+
+
+Your tasks:
+1) Verify frontend->backend API request/response contracts match (paths, params, types). Fix mismatches (frontend or backend).
+2) Detect and fix infinite loops/re-renders in React components (useEffect deps, React query, state mutations during render, runaway timers, polling without guards).
+3) Detect and fix potential runtime/compile errors that cause blank/white screens (missing imports, undefined props/state, bad keys, invalid JSX, vite aliases, tsconfig paths, circular imports).
+4) Ensure the SPA renders without console errors and key pages load.
+5) For backend, coerce query params where appropriate (limit, offset, booleans) and relax/ default non-critical fields (e.g., search-history) to prevent 400s.
+6) Test backend API endpoints with curl commands - verify server responds correctly and data matches frontend expectations:
+   - Health check: curl -s http://localhost:3000/api/health
+   - Auth endpoints: curl -X POST -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"test123"}' http://localhost:3000/api/auth/login
+   - GET endpoints: curl http://localhost:3000/api/users (or similar data endpoints)
+   - Verify responses match frontend data structure expectations and db.sql schema
+7) Test database connectivity and validate that API responses align with database schema in db.sql file.
+8) Compare actual API response structures (from curl tests) with frontend data fetching code to ensure compatibility.
+
+Important:
+- Make minimal, targeted edits. Prefer z.coerce.number()/boolean() and sensible defaults over hard failures.
+- Keep APIs under /api; static SPA via backend if configured.
+- Use curl commands to test actual backend functionality before validating frontend integration.
+- Fix any mismatches between database schema, backend responses, and frontend expectations.
+- Output the code edits directly.
+- Don't delete api endpoints

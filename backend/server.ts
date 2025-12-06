@@ -1,35 +1,77 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from "cors";
 import dotenv from "dotenv";
 import fs from "fs";
-import pkg from 'pg';
-const { Pool } = pkg;
+import { PGlite } from '@electric-sql/pglite';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+
+// Type definitions
+interface UserPayload extends JwtPayload {
+  user_id: number;
+  email: string;
+}
+
+interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    email: string;
+    name: string;
+    created_at: string;
+  };
+}
 
 dotenv.config();
 
 const { DATABASE_URL, PGHOST, PGDATABASE, PGUSER, PGPASSWORD, PGPORT = 5432 } = process.env;
 
-const pool = new Pool(
-  DATABASE_URL
-    ? { 
-        connectionString: DATABASE_URL, 
-        ssl: { require: true } 
-      }
-    : {
-        host: PGHOST,
-        database: PGDATABASE,
-        user: PGUSER,
-        password: PGPASSWORD,
-        port: Number(PGPORT),
-        ssl: { require: true },
-      }
-);
+// JWT Secret - use environment variable or default for development
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+
+// Use PGLite for local development when no DATABASE_URL is provided
+let pool: any;
+let isPGLite = false;
+
+if (!DATABASE_URL && !PGHOST) {
+  // Use PGLite for local development
+  isPGLite = true;
+  pool = new PGlite('./db');
+  console.log('Using PGLite for local database');
+} else {
+  // Use PostgreSQL for production
+  const pkg = await import('pg');
+  const { Pool } = pkg.default;
+  pool = new Pool(
+    DATABASE_URL
+      ? { 
+          connectionString: DATABASE_URL, 
+          ssl: { rejectUnauthorized: false } 
+        }
+      : {
+          host: PGHOST,
+          database: PGDATABASE,
+          user: PGUSER,
+          password: PGPASSWORD,
+          port: Number(PGPORT),
+          ssl: { rejectUnauthorized: false },
+        }
+  );
+  console.log('Using PostgreSQL database');
+}
 
 // const client = await pool.connect();
+
+// Query wrapper to handle both PGLite and PostgreSQL
+const query = async (sql: string, params?: any[]) => {
+  if (isPGLite) {
+    const result = await pool.query(sql, params);
+    return { rows: result.rows };
+  } else {
+    return await pool.query(sql, params);
+  }
+};
 
 const app = express();
 
@@ -52,7 +94,7 @@ app.use(cors({
 app.use(express.json());
 
 // Auth middleware
-const authenticate_token = async (req, res, next) => {
+const authenticate_token = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -61,8 +103,8 @@ const authenticate_token = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const result = await pool.query(
+    const decoded = jwt.verify(token, JWT_SECRET) as UserPayload;
+    const result = await query(
       'SELECT id, email, name, created_at FROM users WHERE id = $1', 
       [decoded.user_id]
     );
@@ -82,21 +124,36 @@ const authenticate_token = async (req, res, next) => {
 // Database initialization
 const initialize_database = async () => {
   try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+    if (isPGLite) {
+      await pool.exec(`
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+    } else {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+    }
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Database initialization error:', error);
     process.exit(1);
   }
 };
+
+// Initialize database on startup
+await initialize_database();
 
 // Routes
 
@@ -115,7 +172,7 @@ app.post('/api/auth/register', async (req, res) => {
     }
 
     // Check if user exists
-    const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    const existingUser = await query('SELECT id FROM users WHERE email = $1', [email]);
     if (existingUser.rows.length > 0) {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
@@ -125,7 +182,7 @@ app.post('/api/auth/register', async (req, res) => {
     const hashed_password = await bcrypt.hash(password, salt_rounds);
 
     // Create user
-    const result = await pool.query(
+    const result = await query(
       'INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING id, email, name, created_at',
       [email.toLowerCase().trim(), hashed_password, name.trim()]
     );
@@ -166,7 +223,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     // Find user
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase().trim()]);
+    const result = await query('SELECT * FROM users WHERE email = $1', [email.toLowerCase().trim()]);
     if (result.rows.length === 0) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
@@ -203,41 +260,41 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // Verify token endpoint
-app.get('/api/auth/verify', authenticate_token, (req, res) => {
+app.get('/api/auth/verify', authenticate_token, (req: AuthRequest, res: Response) => {
   res.json({
     message: 'Token is valid',
     user: {
-      id: req.user.id,
-      email: req.user.email,
-      name: req.user.name,
-      created_at: req.user.created_at
+      id: req.user!.id,
+      email: req.user!.email,
+      name: req.user!.name,
+      created_at: req.user!.created_at
     }
   });
 });
 
 // Get current user endpoint
-app.get('/api/auth/me', authenticate_token, (req, res) => {
+app.get('/api/auth/me', authenticate_token, (req: AuthRequest, res: Response) => {
   res.json({
     user: {
-      id: req.user.id,
-      email: req.user.email,
-      name: req.user.name,
-      created_at: req.user.created_at
+      id: req.user!.id,
+      email: req.user!.email,
+      name: req.user!.name,
+      created_at: req.user!.created_at
     }
   });
 });
 
 // Update user profile endpoint
-app.put('/api/auth/profile', authenticate_token, async (req, res) => {
+app.put('/api/auth/profile', authenticate_token, async (req: AuthRequest, res: Response) => {
   try {
     const { name } = req.body;
-    const user_id = req.user.id;
+    const user_id = req.user!.id;
 
     if (!name || name.trim().length === 0) {
       return res.status(400).json({ message: 'Name is required' });
     }
 
-    const result = await pool.query(
+    const result = await query(
       'UPDATE users SET name = $1 WHERE id = $2 RETURNING id, email, name, created_at',
       [name.trim(), user_id]
     );
@@ -258,15 +315,24 @@ app.put('/api/auth/profile', authenticate_token, async (req, res) => {
 });
 
 // Example protected endpoint
-app.get('/api/protected', authenticate_token, (req, res) => {
+app.get('/api/protected', authenticate_token, (req: AuthRequest, res: Response) => {
   res.json({
     message: 'This is a protected endpoint',
     user: {
-      id: req.user.id,
-      email: req.user.email,
-      name: req.user.name,
+      id: req.user!.id,
+      email: req.user!.email,
+      name: req.user!.name,
     },
     timestamp: new Date().toISOString()
+  });
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    message: 'Backend is running' 
   });
 });
 
